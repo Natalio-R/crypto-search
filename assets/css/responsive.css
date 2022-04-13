@@ -1,0 +1,12 @@
+.TextMoneda {
+  text-align: left;
+  @media (max-width: 1000px) {
+    text-align: right;
+  }
+}
+
+@media only screen and (max-width: 400px) {
+  body {
+    background-color: red;
+  }
+}

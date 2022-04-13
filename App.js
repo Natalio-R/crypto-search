@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, FlatList, StyleSheet, TextInput } from "react-native";
-
+import logo from "./assets/logo_black.png";
 import CoinItem from "./components/CoinItem";
+import "bootstrap/dist/css/bootstrap.css";
+import "bootstrap/dist/js/bootstrap.js";
 
 const App = () => {
   const [coins, setCoins] = useState([]);
@@ -10,7 +12,7 @@ const App = () => {
 
   const loadData = async () => {
     const res = await fetch(
-      "https://api.coingecko.com/api/v3/coins/markets?vs_currency=eur&order=market_cap_desc&per_page=100&page=1&sparkline=false"
+      "https://api.coingecko.com/api/v3/coins/markets?vs_currency=eur&order=market_cap_desc&per_page=100&page=1&sparkline=false&price_change_percentage=1h%2C24h%2C7d"
     );
     const data = await res.json();
     setCoins(data);
@@ -21,28 +23,50 @@ const App = () => {
   }, []);
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Crypo Search</Text>
+    <div class="container-fluid">
+      <div class="container d-flex justify-content-between align-items-center border-bottom border-primary border-2 border-red py-3 px-0">
+        <div class="d-flex justify-content-start align-items-center w-100">
+          <img src={logo} width="60" />
+          <h1 class="ms-3">Crypo Search</h1>
+        </div>
         <TextInput
-          style={styles.searchInput}
           placeholder="Buscar una moneda..."
           placeholderTextColor="#666"
           onChangeText={(text) => setSearch(text)}
+          aria-label="Buscar una moneda..."
+          type="search"
+          style={styles.searchInput}
         ></TextInput>
-      </View>
-      <View style={styles.headInfo}>
-        <Text style={styles.TextId}>#</Text>
-        <Text style={styles.TextMoneda}>Moneda</Text>
-        <Text style={styles.TextTime}>24h</Text>
-        <Text style={styles.TextPrecio}>Precio</Text>
-      </View>
+      </div>
+      <div class="container">
+        <div class="row">
+          <div class="col-1">
+            <p class="my-2 fw-bold">#</p>
+          </div>
+          <div class="col-3">
+            <p class="my-2 fw-bold">Moneda</p>
+          </div>
+          <div class="col-2">
+            <p class="my-2 fw-bold text-end">Porcentaje (1h)</p>
+          </div>
+          <div class="col-2">
+            <p class="my-2 fw-bold text-end">Porcentaje (24h)</p>
+          </div>
+          <div class="col-2">
+            <p class="my-2 fw-bold text-end">Porcentaje (7d)</p>
+          </div>
+          <div class="col-2">
+            <p class="my-2 fw-bold text-end">Precio</p>
+          </div>
+        </div>
+      </div>
       <FlatList
-        style={styles.list}
         data={coins.filter(
           (coin) =>
             coin.name.toLowerCase().includes(search) ||
-            coin.symbol.toLowerCase().includes(search)
+            coin.symbol.toLowerCase().includes(search) ||
+            coin.name.toUpperCase().includes(search) ||
+            coin.symbol.toUpperCase().includes(search)
         )}
         renderItem={({ item }) => {
           return <CoinItem coin={item} />;
@@ -55,29 +79,45 @@ const App = () => {
           setRefreshing(false);
         }}
       />
-      <View style={styles.footer}>
-        <Text style={styles.footerText}>
+      <View>
+        <Text>
           &copy;2020 Copyright | Todos los derechos reservados. Desarrollado e
           implementado por <a href="https://natalio.netlify.app">Natalio R</a>
         </Text>
       </View>
-    </View>
+    </div>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  searchInput: {
+    paddingStart: "1rem",
+    color: "#000",
+    backgroundColor: "#f2f2f2",
+    borderRadius: 4,
+    width: "40%",
+    height: 40,
+    textAlign: "left",
+    outlineWidth: 0,
+    outline: "none",
+  },
+  /*container: {
     backgroundColor: "#ffffff",
     alignItems: "center",
     flex: 1,
+  },
+  logo: {
+    flexDirection: "row",
   },
   title: {
     color: "#000",
     fontSize: 40,
     fontWeight: 700,
+    marginLeft: 20,
   },
   list: {
-    width: "90%",
+    width: "100%",
+    paddingHorizontal: "2.5%",
   },
   headInfo: {
     width: "90%",
@@ -97,15 +137,34 @@ const styles = StyleSheet.create({
     fontWeight: "800",
   },
   TextMoneda: {
-    width: "45%",
+    width: "35%",
     color: "#666",
     fontSize: 16,
     textAlign: "left",
     lineHeight: 40,
     fontWeight: "600",
+    "@media (maxWidth: '1000px')": {
+      textAlign: "right",
+    },
   },
-  TextTime: {
-    width: "30%",
+  TextTime1: {
+    width: "15%",
+    color: "#666",
+    fontSize: 16,
+    textAlign: "center",
+    lineHeight: 40,
+    fontWeight: "600",
+  },
+  TextTime24: {
+    width: "15%",
+    color: "#666",
+    fontSize: 16,
+    textAlign: "center",
+    lineHeight: 40,
+    fontWeight: "600",
+  },
+  TextTime7: {
+    width: "15%",
     color: "#666",
     fontSize: 16,
     textAlign: "center",
@@ -113,7 +172,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   TextPrecio: {
-    width: "20%",
+    width: "15%",
     color: "#666",
     fontSize: 16,
     textAlign: "right",
@@ -133,17 +192,6 @@ const styles = StyleSheet.create({
     borderBottomColor: "#4F46E5",
     borderBottomWidth: 2,
   },
-  searchInput: {
-    paddingStart: "1rem",
-    color: "#000",
-    backgroundColor: "#f2f2f2",
-    borderRadius: 4,
-    width: "40%",
-    height: 40,
-    textAlign: "left",
-    outlineWidth: 0,
-    outline: "none",
-  },
   footer: {
     width: "100%",
     height: 40,
@@ -151,7 +199,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginTop: "2rem",
-  },
+  },*/
 });
 
 export default App;
