@@ -84,7 +84,7 @@ const CoinItem = ({ coin }) => {
         <div class="col-2">
           <View style={styles.conTextPrice}>
             <Text style={styles.textPrice}>
-              {coin.current_price.toFixed(3)} €
+              {coin.current_price.toFixed(4)} €
             </Text>
           </View>
         </div>
